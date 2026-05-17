@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from storage import load_tasks, save_tasks
 from task_manager import TaskManager
+from trivia import run_quiz
 
 DATA_FILE = "data/tasks.json"
 
@@ -12,14 +13,14 @@ def show_menu() -> None:
     print("2 - Listar tarefas")
     print("3 - Concluir tarefa")
     print("4 - Remover tarefa")
-    print("5 - Sair")
+    print("5 - Quiz de estudos")
+    print("6 - Sair")
 
 
 def print_tasks(tasks: list[dict]) -> None:
     if not tasks:
         print("\nNenhuma tarefa cadastrada.")
         return
-
     print("\nLista de tarefas:")
     for i, task in enumerate(tasks, start=1):
         status = "Concluída" if task["done"] else "Pendente"
@@ -28,7 +29,6 @@ def print_tasks(tasks: list[dict]) -> None:
 
 def add_task_flow(manager: TaskManager) -> None:
     title = input("\nDigite o título da tarefa: ")
-
     try:
         manager.add_task(title)
         save_tasks(DATA_FILE, manager.list_tasks())
@@ -40,10 +40,8 @@ def add_task_flow(manager: TaskManager) -> None:
 def complete_task_flow(manager: TaskManager) -> None:
     tasks = manager.list_tasks()
     print_tasks(tasks)
-
     if not tasks:
         return
-
     try:
         choice = int(input("\nDigite o número da tarefa a concluir: "))
         manager.complete_task(choice - 1)
@@ -58,10 +56,8 @@ def complete_task_flow(manager: TaskManager) -> None:
 def remove_task_flow(manager: TaskManager) -> None:
     tasks = manager.list_tasks()
     print_tasks(tasks)
-
     if not tasks:
         return
-
     try:
         choice = int(input("\nDigite o número da tarefa a remover: "))
         removed_task = manager.remove_task(choice - 1)
@@ -90,6 +86,8 @@ def main() -> None:
         elif option == "4":
             remove_task_flow(manager)
         elif option == "5":
+            run_quiz()
+        elif option == "6":
             print("\nEncerrando o programa...")
             break
         else:
