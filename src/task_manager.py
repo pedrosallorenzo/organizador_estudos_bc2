@@ -6,10 +6,8 @@ class TaskManager:
     # Adicionar uma nova tarefa
     def add_task(self, title: str) -> dict:
         normalized_title = title.strip()
-
         if not normalized_title:
             raise ValueError("O título da tarefa não pode ser vazio.")
-
         task = {
             "title": normalized_title,
             "done": False,
@@ -23,16 +21,6 @@ class TaskManager:
 
     # Filtra tarefas por status
     def filter_tasks(self, status: str) -> list[dict]:
-        """Retorna tarefas filtradas por status.
-
-        Args:
-            status: 'pendente' para tarefas não concluídas,
-                    'concluida' para tarefas concluídas,
-                    'todas' para todas as tarefas.
-
-        Raises:
-            ValueError: se o status for inválido.
-        """
         status = status.strip().lower()
         if status == "pendente":
             return [t for t in self.tasks if not t["done"]]
