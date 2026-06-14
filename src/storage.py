@@ -1,14 +1,18 @@
 from __future__ import annotations
 
 import os
-from supabase import create_client, Client
+
+from dotenv import load_dotenv
+from supabase import Client, create_client
+
+load_dotenv()
 
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "")
 
 
 def get_client() -> Client:
-    # Retorna um cliente Supabase autenticado
+    # Retorna um cliente Supabase autenticado.
     if not SUPABASE_URL or not SUPABASE_KEY:
         raise EnvironmentError(
             "Variáveis de ambiente SUPABASE_URL e SUPABASE_KEY não configuradas."
@@ -18,7 +22,6 @@ def get_client() -> Client:
 
 def load_tasks(_file_path: str = "") -> list[dict]:
     # Carrega todas as tarefas do Supabase
-
     client = get_client()
     response = client.table("tasks").select("*").execute()
     return [
@@ -29,13 +32,8 @@ def load_tasks(_file_path: str = "") -> list[dict]:
 
 def save_tasks(_file_path: str, tasks: list[dict]) -> None:
     # Sincroniza a lista de tarefas com o Supabase
-
     client = get_client()
-
-    # Remove todas as tarefas existentes
     client.table("tasks").delete().neq("id", 0).execute()
-
-    # Re-insere as tarefas atuais (ignora o campo 'id' para o Supabase gerar)
     if tasks:
         rows = [{"title": t["title"], "done": t["done"]} for t in tasks]
         client.table("tasks").insert(rows).execute()
