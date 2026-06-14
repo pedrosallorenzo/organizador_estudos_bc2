@@ -4,7 +4,7 @@ from storage import load_tasks, save_tasks
 from task_manager import TaskManager
 from trivia import run_quiz
 
-DATA_FILE = "data/tasks.json"
+DATA_FILE = ""  # persistência via Supabase
 
 
 def show_menu() -> None:
