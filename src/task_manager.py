@@ -1,9 +1,6 @@
-from __future__ import annotations
-
 # Gerencia as tarefas de estudo
 class TaskManager:
-
-    def __init__(self, tasks: list[dict] | None = None) -> None:
+    def init(self, tasks: list[dict] | None = None) -> None:
         self.tasks = tasks if tasks is not None else []
 
     # Adicionar uma nova tarefa
@@ -23,6 +20,27 @@ class TaskManager:
     # Retorna a lista de tarefas
     def list_tasks(self) -> list[dict]:
         return self.tasks
+
+    # Filtra tarefas por status
+    def filter_tasks(self, status: str) -> list[dict]:
+        """Retorna tarefas filtradas por status.
+
+        Args:
+            status: 'pendente' para tarefas não concluídas,
+                    'concluida' para tarefas concluídas,
+                    'todas' para todas as tarefas.
+
+        Raises:
+            ValueError: se o status for inválido.
+        """
+        status = status.strip().lower()
+        if status == "pendente":
+            return [t for t in self.tasks if not t["done"]]
+        if status == "concluida":
+            return [t for t in self.tasks if t["done"]]
+        if status == "todas":
+            return self.tasks
+        raise ValueError("Status inválido. Use 'pendente', 'concluida' ou 'todas'.")
 
     # Marca como concluída a tarefa
     def complete_task(self, index: int) -> dict:
