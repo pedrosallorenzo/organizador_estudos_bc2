@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+from dotenv import load_dotenv
+load_dotenv()
+
 from storage import load_tasks, save_tasks
 from task_manager import TaskManager
 from trivia import run_quiz
 
-DATA_FILE = "data/tasks.json"
+DATA_FILE = "" # Persistência via Supabase
 
 
 def show_menu() -> None:

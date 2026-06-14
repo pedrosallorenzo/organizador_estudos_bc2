@@ -1,42 +1,41 @@
 from __future__ import annotations
 
-import json
-from pathlib import Path
+import os
+from supabase import create_client, Client
 
-# Garante que o diretório e o arquivo de dados existam
-def ensure_data_file(file_path: str) -> Path:
-    path = Path(file_path)
-    path.parent.mkdir(parents=True, exist_ok=True)
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "")
 
-    if not path.exists():
-        path.write_text("[]", encoding="utf-8")
 
-    return path
+def get_client() -> Client:
+    # Retorna um cliente Supabase autenticado
+    if not SUPABASE_URL or not SUPABASE_KEY:
+        raise EnvironmentError(
+            "Variáveis de ambiente SUPABASE_URL e SUPABASE_KEY não configuradas."
+        )
+    return create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# Carregar as tarefas em um arquivo .json
-# Caso esteja vazio ou inválido, a função
-# retorna uma lista vazia
-def load_tasks(file_path: str) -> list[dict]: 
-    path = ensure_data_file(file_path)
 
-    try:
-        content = path.read_text(encoding="utf-8").strip()
-        if not content:
-            return []
+def load_tasks(_file_path: str = "") -> list[dict]:
+    # Carrega todas as tarefas do Supabase
 
-        data = json.loads(content)
+    client = get_client()
+    response = client.table("tasks").select("*").execute()
+    return [
+        {"id": row["id"], "title": row["title"], "done": row["done"]}
+        for row in response.data
+    ]
 
-        if isinstance(data, list):
-            return data
 
-        return []
-    except (json.JSONDecodeError, OSError):
-        return []
+def save_tasks(_file_path: str, tasks: list[dict]) -> None:
+    # Sincroniza a lista de tarefas com o Supabase
 
-# Salva as tarefas em formato .json
-def save_tasks(file_path: str, tasks: list[dict]) -> None:
-    path = ensure_data_file(file_path)
-    path.write_text(
-        json.dumps(tasks, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
+    client = get_client()
+
+    # Remove todas as tarefas existentes
+    client.table("tasks").delete().neq("id", 0).execute()
+
+    # Re-insere as tarefas atuais (ignora o campo 'id' para o Supabase gerar)
+    if tasks:
+        rows = [{"title": t["title"], "done": t["done"]} for t in tasks]
+        client.table("tasks").insert(rows).execute()

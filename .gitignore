@@ -13,3 +13,6 @@ data/*.json
 
 # Virtual environments
 .venv
+
+# Secret Files
+.env
