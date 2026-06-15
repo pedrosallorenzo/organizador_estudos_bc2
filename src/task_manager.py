@@ -1,6 +1,6 @@
 # Gerencia as tarefas de estudo
 class TaskManager:
-    def init(self, tasks: list[dict] | None = None) -> None:
+    def __init__(self, tasks: list[dict] | None = None) -> None:
         self.tasks = tasks if tasks is not None else []
 
     # Adicionar uma nova tarefa
