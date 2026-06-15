@@ -1,4 +1,4 @@
-from __future__ import annotations
+from future import annotations
 
 from storage import load_tasks, save_tasks
 from task_manager import TaskManager
@@ -13,9 +13,9 @@ def show_menu() -> None:
     print("2 - Listar tarefas")
     print("3 - Concluir tarefa")
     print("4 - Remover tarefa")
-    print("5 - Quiz de estudos")
-    print("6 - Sair")
-
+    print("5 - Filtrar tarefas por status")
+    print("6 - Quiz de estudos")
+    print("7 - Sair")
 
 def print_tasks(tasks: list[dict]) -> None:
     if not tasks:
@@ -68,6 +68,23 @@ def remove_task_flow(manager: TaskManager) -> None:
     except IndexError as error:
         print(f"Erro: {error}")
 
+def filter_task_flow(manager: TaskManager) -> None:
+    print("\nFiltrar por:")
+    print("  1 - Pendentes")
+    print("  2 - Concluídas")
+    print("  3 - Todas")
+    option = input("\nEscolha uma opção: ").strip()
+    status_map = {"1": "pendente", "2": "concluida", "3": "todas"}
+    status = status_map.get(option)
+    if not status:
+        print("Opção inválida.")
+        return
+    try:
+        tasks = manager.filter_tasks(status)
+        print_tasks(tasks)
+    except ValueError as error:
+        print(f"Erro: {error}")
+
 
 def main() -> None:
     tasks = load_tasks(DATA_FILE)
@@ -86,13 +103,15 @@ def main() -> None:
         elif option == "4":
             remove_task_flow(manager)
         elif option == "5":
-            run_quiz()
+            filter_task_flow(manager)
         elif option == "6":
+            run_quiz()
+        elif option == "7":
             print("\nEncerrando o programa...")
             break
         else:
             print("Opção inválida. Tente novamente.")
 
 
-if __name__ == "__main__":
+if name == "main":
     main()
