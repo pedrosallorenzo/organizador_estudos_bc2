@@ -1,5 +1,3 @@
-from future import annotations
-
 from storage import load_tasks, save_tasks
 from task_manager import TaskManager
 from trivia import run_quiz
@@ -113,5 +111,5 @@ def main() -> None:
             print("Opção inválida. Tente novamente.")
 
 
-if name == "main":
+if __name__ == "__main__":
     main()
