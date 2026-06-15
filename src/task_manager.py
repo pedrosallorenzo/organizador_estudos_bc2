@@ -1,16 +1,13 @@
 # Gerencia as tarefas de estudo
 class TaskManager:
-
     def init(self, tasks: list[dict] | None = None) -> None:
         self.tasks = tasks if tasks is not None else []
 
     # Adicionar uma nova tarefa
     def add_task(self, title: str) -> dict:
         normalized_title = title.strip()
-
         if not normalized_title:
             raise ValueError("O título da tarefa não pode ser vazio.")
-
         task = {
             "title": normalized_title,
             "done": False,
@@ -21,6 +18,17 @@ class TaskManager:
     # Retorna a lista de tarefas
     def list_tasks(self) -> list[dict]:
         return self.tasks
+
+    # Filtra tarefas por status
+    def filter_tasks(self, status: str) -> list[dict]:
+        status = status.strip().lower()
+        if status == "pendente":
+            return [t for t in self.tasks if not t["done"]]
+        if status == "concluida":
+            return [t for t in self.tasks if t["done"]]
+        if status == "todas":
+            return self.tasks
+        raise ValueError("Status inválido. Use 'pendente', 'concluida' ou 'todas'.")
 
     # Marca como concluída a tarefa
     def complete_task(self, index: int) -> dict:
@@ -37,14 +45,3 @@ class TaskManager:
     def _validate_index(self, index: int) -> None:
         if index < 0 or index >= len(self.tasks):
             raise IndexError("Índice de tarefa inválido.")
-
-    #Filtra tarefas por status
-    def filter_tasks(self, status: str) -> list[dict]:
-        status = status.strip().lower()
-        if status == "pendente":
-            return [t for t in self.tasks if not t["done"]]
-        if status == "concluida":
-            return [t for t in self.tasks if t["done"]]
-        if status == "todas":
-            return self.tasks
-        raise ValueError("Status inválido. Use 'pendente', 'concluida' ou 'todas'.")
